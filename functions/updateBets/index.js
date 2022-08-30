@@ -33,12 +33,9 @@ const db = admin.firestore();
 module.exports.updateBet = functions.firestore
   .document("users/{userId}/userBets/{betId}")
   .onWrite((change, context) => {
-    console.log("change", context.params);
     const beforData = change?.before;
     const afterData = change?.after;
     const betId = context.params.betId;
-
-    console.log("before data", beforData?.exists);
 
     // Meaning the document has been created
     if (!beforData?.exists && afterData?.exists) {
@@ -68,6 +65,4 @@ module.exports.updateBet = functions.firestore
         })
         .catch((e) => console.log(e));
     }
-    console.log("after data", afterData);
-    console.log("context ", context);
   });
