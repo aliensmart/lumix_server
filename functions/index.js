@@ -28,6 +28,7 @@ const db = admin.firestore();
 //   });
 
 exports.userBetsReader = updateBet.updateBet;
+exports.chooseWinner = updateBet.chooseWinners;
 
 exports.onDeleteUser = userFunctions.onUserDelete;
 

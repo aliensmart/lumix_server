@@ -29,6 +29,7 @@
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
 const db = admin.firestore();
+const utils = require("./utils");
 
 module.exports.updateBet = functions.firestore
   .document("users/{userId}/userBets/{betId}")
@@ -64,5 +65,22 @@ module.exports.updateBet = functions.firestore
           beters: admin.firestore.FieldValue.increment(-1),
         })
         .catch((e) => console.log(e));
+    }
+  });
+
+module.exports.chooseWinners = functions.firestore
+  .document("bets/{betId}")
+  .onUpdate(async (change, context) => {
+    console.log("changes ", change);
+    console.log("constext ", context);
+    const afterChange = change.after;
+    const beforeChange = change.before;
+
+    const newData = afterChange?.data();
+
+    if (newData.status === "PLAYING") {
+      await utils
+        .runGame(afterChange.ref)
+        .catch((e) => console.log("error playing game ", e));
     }
   });
