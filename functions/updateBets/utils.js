@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
+// const functions = require("firebase-functions");
 const utils = require("../utils");
 const db = admin.firestore();
 // https://stackoverflow.com/questions/58577984/how-to-prevent-firebase-firestore-emulator-from-clearing-the-database-at-exit

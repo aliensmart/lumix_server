@@ -28,7 +28,7 @@
  */
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
-const db = admin.firestore();
+// const db = admin.firestore();
 const utils = require("../utils");
 
 module.exports.onUserDelete = functions.firestore

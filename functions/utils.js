@@ -69,18 +69,18 @@ module.exports.timer = (ms) => new Promise((res) => setTimeout(res, ms));
 module.exports.randomItem = (arr) =>
   arr.splice((Math.random() * arr.length) | 0, 1);
 
-const generateRandom = (min = 500, max = 1000) => {
-  // find diff
-  let difference = max - min;
+// const generateRandom = (min = 500, max = 1000) => {
+//   // find diff
+//   let difference = max - min;
 
-  // generate random number
-  let rand = Math.random();
+//   // generate random number
+//   let rand = Math.random();
 
-  // multiply with difference
-  rand = Math.floor(rand * difference);
+//   // multiply with difference
+//   rand = Math.floor(rand * difference);
 
-  // add with min value
-  rand = rand + min;
+//   // add with min value
+//   rand = rand + min;
 
-  return rand;
-};
+//   return rand;
+// };
