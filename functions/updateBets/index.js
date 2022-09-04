@@ -71,8 +71,6 @@ module.exports.updateBet = functions.firestore
 module.exports.chooseWinners = functions.firestore
   .document("bets/{betId}")
   .onUpdate(async (change, context) => {
-    console.log("changes ", change);
-    console.log("constext ", context);
     const afterChange = change.after;
     const beforeChange = change.before;
 
