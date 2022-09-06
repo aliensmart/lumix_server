@@ -42,8 +42,8 @@ const chooseSingle = async (workedData, DocumentReference) => {
   const winNumber = workedData?.maxEl;
   await DocumentReference.update({ isShuffling: true });
 
-  const winningAmount = [0, 0, 0, 500, 750, 1000, 1500];
-
+  // const winningAmount = [0, 0, 0, 500, 750, 1000, 1500];
+  const winningAmount = [500, 750, 1000];
   for (let i = 0; i < winNumber; i++) {
     const randomAmount = utils.randomizer(winningAmount);
     utils.shuffleArray(players);
@@ -63,6 +63,7 @@ const chooseSingle = async (workedData, DocumentReference) => {
         .doc(`users/${chosen?.[0]}/`)
         .update({
           totalWon: admin.firestore.FieldValue.increment(amount),
+          availableAmount: admin.firestore.FieldValue.increment(amount),
         })
         .catch((e) => console.log(e));
     }
