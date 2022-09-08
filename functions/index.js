@@ -31,6 +31,7 @@ exports.userBetsReader = updateBet.updateBet;
 exports.chooseWinner = updateBet.chooseWinners;
 
 exports.onDeleteUser = userFunctions.onUserDelete;
+exports.onUserCreate = userFunctions.createUser;
 
 /**
  * This function will update the user data with the location data based on the user city

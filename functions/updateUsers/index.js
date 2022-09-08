@@ -28,7 +28,7 @@
  */
 const admin = require("firebase-admin");
 const functions = require("firebase-functions");
-// const db = admin.firestore();
+const db = admin.firestore();
 const utils = require("../utils");
 
 module.exports.onUserDelete = functions.firestore
@@ -38,3 +38,12 @@ module.exports.onUserDelete = functions.firestore
       console.log("error while deleting user... ", change.ref.path);
     });
   });
+
+module.exports.createUser = functions.https.onCall(async (data, context) => {
+  const { email, password } = data;
+  const userRecord = await admin
+    .auth()
+    .createUser({ email: email, password: password })
+    .catch((e) => console.log(e));
+  return userRecord.uid;
+});
