@@ -9,7 +9,7 @@ const userFunctions = require("./updateUsers");
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 
-exports.userBetsReader = updateBet.updateBet;
+// exports.userBetsReader = updateBet.updateBet;
 exports.chooseWinner = updateBet.chooseWinners;
 
 exports.onDeleteUser = userFunctions.onUserDelete;

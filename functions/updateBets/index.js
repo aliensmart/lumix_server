@@ -31,42 +31,42 @@ const functions = require("firebase-functions");
 const db = admin.firestore();
 const utils = require("./utils");
 
-module.exports.updateBet = functions.firestore
-  .document("users/{userId}/userBets/{betId}")
-  .onWrite((change, context) => {
-    const beforData = change?.before;
-    const afterData = change?.after;
-    const betId = context.params.betId;
+// module.exports.updateBet = functions.firestore
+//   .document("users/{userId}/userBets/{betId}")
+//   .onWrite((change, context) => {
+//     const beforData = change?.before;
+//     const afterData = change?.after;
+//     const betId = context.params.betId;
 
-    // Meaning the document has been created
-    if (!beforData?.exists && afterData?.exists) {
-      // TODO
-      // Update the beter count by incrementing it with 1
-      db.collection("bets")
-        .doc(`${betId}`)
-        .update({
-          beters: admin.firestore.FieldValue.increment(1),
-        })
-        .catch((e) => console.log(e));
-    }
-    if (beforData?.exists && afterData?.exists) {
-      //meaning the document exists already and it is an update
-      return;
-    }
+//     // Meaning the document has been created
+//     if (!beforData?.exists && afterData?.exists) {
+//       // TODO
+//       // Update the beter count by incrementing it with 1
+//       db.collection("bets")
+//         .doc(`${betId}`)
+//         .update({
+//           beters: admin.firestore.FieldValue.increment(1),
+//         })
+//         .catch((e) => console.log(e));
+//     }
+//     if (beforData?.exists && afterData?.exists) {
+//       //meaning the document exists already and it is an update
+//       return;
+//     }
 
-    // this means the document has been deleted
-    if (beforData?.exists && !afterData?.exists) {
-      // When a user delete a bets
-      // Update the beter count by decrementing it with 1
+//     // this means the document has been deleted
+//     if (beforData?.exists && !afterData?.exists) {
+//       // When a user delete a bets
+//       // Update the beter count by decrementing it with 1
 
-      db.collection("bets")
-        .doc(`${betId}`)
-        .update({
-          beters: admin.firestore.FieldValue.increment(-1),
-        })
-        .catch((e) => console.log(e));
-    }
-  });
+//       db.collection("bets")
+//         .doc(`${betId}`)
+//         .update({
+//           beters: admin.firestore.FieldValue.increment(-1),
+//         })
+//         .catch((e) => console.log(e));
+//     }
+//   });
 
 module.exports.chooseWinners = functions.firestore
   .document("bets/{betId}")
@@ -75,8 +75,8 @@ module.exports.chooseWinners = functions.firestore
     const beforeChange = change.before;
 
     const newData = afterChange?.data();
-
-    if (newData.status === "PLAYING") {
+    const oldData = beforeChange?.data();
+    if (newData.status === "PLAYING" && oldData?.status !== "PLAYING") {
       await utils
         .runGame(afterChange.ref)
         .catch((e) => console.log("error playing game ", e));

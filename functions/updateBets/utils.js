@@ -24,8 +24,8 @@ const chooseSingle = async (workedData, DocumentReference, betData) => {
   await DocumentReference.update({ isShuffling: true });
 
   const winningAmount = betData?.winAmount;
+  utils.shuffleArray(players);
   for (let i = 0; i < winNumber; i++) {
-    utils.shuffleArray(players);
     let chosen = utils.randomItem(players);
     const beter = chosen?.[0];
 
@@ -39,7 +39,7 @@ const chooseSingle = async (workedData, DocumentReference, betData) => {
     });
 
     await beter?.ref?.update({
-      won: amount,
+      won: admin.firestore.FieldValue.increment(amount),
       isChosen: true,
       lastUpdated: admin.firestore.Timestamp.now(),
     });
@@ -75,4 +75,5 @@ module.exports.runGame = async (DocumentReference) => {
       userBets?.ref?.update({ status: "ENDED", played: true });
     })
   ).catch((e) => console.log(e));
+  return;
 };
