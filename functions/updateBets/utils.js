@@ -8,96 +8,71 @@ const db = admin.firestore();
  * @param {string} gameId
  * @return array of objects containing the user Id and the amount he has played
  */
-const getAllPlayedUser = async (gameId) => {
-  let playersIds = [];
-  let maxEl = 0;
-  const playersDocs = await db
-    .collectionGroup("userBets")
-    .where("betId", "==", gameId)
-    .get();
-  const dataArr = playersDocs?.docs?.map((doc) => {
-    const singleObj = {
-      userId: "", // id of the user
-      amountPlayed: 0, // total amount the user has played
-      numberInArray: 0, // this is the amount the user has played divided by 500
-    };
+const getAllPlayedUser = async (gameRef) => {
+  let usersBetsDocs = await gameRef.collection("usersBets").get();
 
-    let data = doc?.data();
-    let userId = doc.ref.parent.parent.id;
-    singleObj.amountPlayed = data.amountPlayed;
-    singleObj.userId = userId;
-    singleObj.numberInArray = Math.floor(data.amountPlayed / 500);
-    maxEl = maxEl < singleObj.numberInArray ? singleObj.numberInArray : maxEl;
-    for (let i = 0; i < singleObj.numberInArray; i++) {
-      playersIds.push(userId);
-    }
-    return singleObj;
+  let userBetData = usersBetsDocs?.docs?.map((doc) => {
+    return { ...doc?.data(), ref: doc?.ref };
   });
-  return { usersData: dataArr, players: playersIds, maxEl: maxEl };
+  return userBetData;
 };
 
-const chooseSingle = async (workedData, DocumentReference) => {
-  const players = [...workedData?.players];
+const chooseSingle = async (workedData, DocumentReference, betData) => {
+  const players = [...workedData];
 
-  const winNumber = workedData?.maxEl;
+  const winNumber = betData?.winnersNumber;
   await DocumentReference.update({ isShuffling: true });
 
-  const winningAmount = [0, 0, 0, 500, 0, 750, 0, 1000];
-  // const winningAmount = [500, 750, 1000];
+  const winningAmount = betData?.winAmount;
   for (let i = 0; i < winNumber; i++) {
-    const randomAmount = utils.randomizer(winningAmount);
     utils.shuffleArray(players);
     let chosen = utils.randomItem(players);
+    const beter = chosen?.[0];
 
-    const amount = winningAmount[randomAmount];
-    if (amount > 0) {
-      await db
-        .doc(`users/${chosen?.[0]}/userBets/${DocumentReference?.id}`)
-        .update({
-          won: admin.firestore.FieldValue.increment(amount),
-          isChosen: true,
-          lastUpdated: admin.firestore.Timestamp.now(),
-        })
-        .catch((e) => console.log(e));
-      await db
-        .doc(`users/${chosen?.[0]}/`)
-        .update({
-          totalWon: admin.firestore.FieldValue.increment(amount),
-          availableAmount: admin.firestore.FieldValue.increment(amount),
-        })
-        .catch((e) => console.log(e));
-    }
+    const amount =
+      Math.floor(beter?.betAmount / betData?.minBet) * winningAmount;
+
+    // Update user document with the current gamed
+    await beter?.playerRef?.update({
+      totalWon: admin.firestore.FieldValue.increment(amount),
+      availableAmount: admin.firestore.FieldValue.increment(amount),
+    });
+
+    await beter?.ref?.update({
+      won: amount,
+      isChosen: true,
+      lastUpdated: admin.firestore.Timestamp.now(),
+    });
   }
-  // console.log(randomAmount);
-  await DocumentReference.update({ status: "ENDED", isShuffling: false });
+
+  await DocumentReference.update({
+    status: "ENDED",
+    isShuffling: false,
+    played: true,
+  });
   // await
 };
 
 module.exports.runGame = async (DocumentReference) => {
-  const workedData = await getAllPlayedUser(DocumentReference.id);
-  // console.log(workedData);
+  const workedData = await getAllPlayedUser(DocumentReference);
+  const betDoc = await DocumentReference?.get();
+  const betData = betDoc?.data();
 
   // update all document of devs when game start playing
   await Promise.all(
-    workedData?.usersData?.map((userdata) => {
-      db.doc(
-        `users/${userdata?.userId}/userBets/${DocumentReference.id}`
-      ).update({ status: "PLAYING" });
+    workedData?.map((userBets) => {
+      userBets?.ref?.update({ status: "PLAYING" });
     })
   ).catch((e) => console.log(e));
   // Choose winners
-  await chooseSingle(workedData, DocumentReference).catch((e) =>
+  await chooseSingle(workedData, DocumentReference, betData).catch((e) =>
     console.log(e)
   );
 
   // update all document of devs after choosing docs
   await Promise.all(
-    workedData?.usersData?.map((userdata) => {
-      db.doc(
-        `users/${userdata?.userId}/userBets/${DocumentReference.id}`
-      ).update({ status: "ENDED" });
+    workedData?.map((userBets) => {
+      userBets?.ref?.update({ status: "ENDED", played: true });
     })
   ).catch((e) => console.log(e));
-
-  // u
 };
