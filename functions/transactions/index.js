@@ -104,4 +104,18 @@ module.exports.createContact = functions.firestore
       "🚀 ~ file: index.js ~ line 95 ~ .onCreate ~ userData",
       userData
     );
+    //   if transaction type is deposit and isAddedContact false we will create a contact and update user doc with isAddedContact true
+    if (transactionData?.type === "Deposit" && !userData?.isAddedContact) {
+      //   const contact = await utils.createContact(
+      //     userData.phoneNumber,
+      //     transactionData.amount,
+      //     transactionData.transactionId
+      //   );
+      //   console.log(
+      //     "🚀 ~ file: index.js ~ line 104 ~ .onCreate ~ contact",
+      //     contact
+      //   );
+    }
+    //   else we do nothing
+    //   if transaction type is withdraw we will send a transfere request to cinetpay api   with the given contact and amount to withdraw
   });
