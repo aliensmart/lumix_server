@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 const updateBet = require("./updateBets");
 const userFunctions = require("./updateUsers");
+const transtions = require("./transactions");
 // const db = admin.firestore();
 
 // // Create and Deploy Your First Cloud Functions
@@ -14,6 +15,8 @@ exports.chooseWinner = updateBet.chooseWinners;
 
 exports.onDeleteUser = userFunctions.onUserDelete;
 exports.onUserCreate = userFunctions.createUser;
+
+exports.createContact = transtions.createContact;
 
 /**
  * This function will update the user data with the location data based on the user city
