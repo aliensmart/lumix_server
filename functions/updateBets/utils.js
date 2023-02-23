@@ -45,6 +45,18 @@ const chooseSingle = async (workedData, DocumentReference, betData) => {
     });
   }
 
+  players?.forEach((player) => {
+    if (!player?.isChosen) {
+      player?.playerRef?.update({
+        totalLost: admin.firestore.FieldValue.increment(player?.betAmount),
+      });
+      player?.ref?.update({
+        lost: admin.firestore.FieldValue.increment(player?.betAmount),
+        lastUpdated: admin.firestore.Timestamp.now(),
+      });
+    }
+  });
+
   await DocumentReference.update({
     status: "ENDED",
     isShuffling: false,

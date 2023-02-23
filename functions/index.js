@@ -14,9 +14,9 @@ const transtions = require("./transactions");
 exports.chooseWinner = updateBet.chooseWinners;
 
 exports.onDeleteUser = userFunctions.onUserDelete;
-exports.onUserCreate = userFunctions.createUser;
+// exports.onUserCreate = userFunctions.createUser;
 
-exports.createContact = transtions.createContact;
+// exports.createContact = transtions.createContact;
 
 /**
  * This function will update the user data with the location data based on the user city
