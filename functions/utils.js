@@ -66,8 +66,12 @@ module.exports.timer = (ms) => new Promise((res) => setTimeout(res, ms));
  * @param {array} arr
  * @returns array of single item
  */
-module.exports.randomItem = (arr) =>
-  arr.splice((Math.random() * arr.length) | 0, 1);
+module.exports.randomItem = (arr) => {
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  const randomItem = arr[randomIndex];
+  arr.splice(randomIndex, 1);
+  return randomItem;
+};
 
 // const generateRandom = (min = 500, max = 1000) => {
 //   // find diff

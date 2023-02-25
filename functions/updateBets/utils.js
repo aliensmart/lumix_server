@@ -24,7 +24,6 @@ const chooseSingle = async (workedData, DocumentReference, betData) => {
   await DocumentReference.update({ isShuffling: true });
 
   const winningAmount = betData?.winAmount;
-  utils.shuffleArray(players);
   for (let i = 0; i < winNumber; i++) {
     let chosen = utils.randomItem(players);
     const beter = chosen?.[0];
@@ -43,6 +42,12 @@ const chooseSingle = async (workedData, DocumentReference, betData) => {
       isChosen: true,
       lastUpdated: admin.firestore.Timestamp.now(),
     });
+
+    // Remove the selected player from the array
+    players.splice(players.indexOf(chosen), 1);
+
+    // Shuffle the array again for the next selection
+    utils.shuffleArray(players);
   }
 
   players?.forEach((player) => {
